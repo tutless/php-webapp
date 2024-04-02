@@ -1,0 +1,11 @@
+create view vw_joborderunitinfo as select * from joborder inner join unitinfo on joborder.jonumber = unitinfo.uijonumber
+
+create view vw_jotrans as SELECT * FROM vw_joborderunitinfo inner join transaction on vw_joborderunitinfo.jonumber = transaction.transjonumber
+
+Create view vw_maxtrans as SELECT transjonumber as transmaxjonumber, max(transid) as transmax from transaction group by transjonumber
+
+create view vw_mtall as SELECT * FROM vw_maxtrans inner join transaction on vw_maxtrans.transmax = transaction.transid
+
+create view vw_mtalljo as select * from joborder inner join vw_mtall on joborder.jonumber = vw_mtall.transjonumber
+
+create view vw_jotranspay as SELECT * FROM payments inner join vw_jotrans on payments.paytransid = vw_jotrans.transid
